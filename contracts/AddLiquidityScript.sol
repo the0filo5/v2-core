@@ -3,7 +3,7 @@ pragma solidity ^0.5.16;
 
 import "./UniswapV2Pair.sol";
 import "TheosTestToken.sol"; // Your actual contract import for token0
-import "TheosStabbleToken.sol";  //Your Actual Contract Import For Token1
+import "TheosStableToken.sol";  //Your Actual Contract Import For Token1
 
 contract AddLiquidityScript {
     TheosTestToken public token0;
