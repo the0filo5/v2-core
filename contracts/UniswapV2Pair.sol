@@ -8,6 +8,26 @@ import './interfaces/IERC20.sol';
 import './interfaces/IUniswapV2Factory.sol';
 import './interfaces/IUniswapV2Callee.sol';
 
+/*
+    ### **2. `UniswapV2Pair` (Pair contract)**
+
+    This contract **handles the liquidity pool logic**, including **adding/removing liquidity** and **swapping tokens**.
+
+    - **Purpose:** This is the core contract that manages:
+    - Token reserves (`reserve0`, `reserve1`)
+    - Swaps between token0 and token1
+    - Minting/burning LP tokens (calls `_mint()` and `_burn()` from the `UniswapV2ERC20` parent contract)
+    - **Key functions:**  
+    - `mint()` → called when **adding liquidity**  
+    - `burn()` → called when **removing liquidity**  
+    - `swap()` → called when **swapping tokens**  
+    - `_update()` → updates the reserves  
+    - `_safeTransfer()` → safely transfers tokens between users and the contract  
+
+    So **yes**, this contract handles **swapping**, and **minting/burning LP tokens** when you interact with the pool.
+
+    ---
+*/
 contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
     using SafeMath  for uint;
     using UQ112x112 for uint224;
@@ -106,6 +126,26 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
         }
     }
 
+    /*
+
+    ### **How to Add Liquidity:**
+
+    1. **Send tokens** (let's say Token0 and Token1) to the `UniswapV2Pair` contract address directly.
+
+    2. **Call `mint(to)`** on the pair contract:
+    - Calculates how much liquidity (LP tokens) to mint.
+    - Calls `_mint(to, liquidity)` in the **ERC20 contract** to mint LP tokens for you.
+    - Updates the pool reserves.
+
+    **Example steps:**
+
+    ```solidity
+    IERC20(token0).transfer(pairAddress, amount0);
+    IERC20(token1).transfer(pairAddress, amount1);
+    UniswapV2Pair(pairAddress).mint(msg.sender); // mints LP tokens to you
+    ```
+
+    */
     // this low-level function should be called from a contract which performs important safety checks
     function mint(address to) external lock returns (uint liquidity) {
         (uint112 _reserve0, uint112 _reserve1,) = getReserves(); // gas savings

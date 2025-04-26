@@ -3,6 +3,27 @@ pragma solidity =0.5.16;
 import './interfaces/IUniswapV2ERC20.sol';
 import './libraries/SafeMath.sol';
 
+/*
+---
+
+    ### **1. `UniswapV2ERC20` (Liquidity Provider (LP) Token contract)**
+
+    This contract **handles the LP tokens**. 
+
+    - **Purpose:** When you provide liquidity (i.e., deposit two tokens like ETH and DAI) into a Uniswap pair, the pair contract mints **LP tokens** for you. These LP tokens represent your share in the liquidity pool.  
+    - **Functionality:**  
+    - ERC20-like behavior: `approve`, `transfer`, `transferFrom`.  
+    - It supports **EIP-2612 permit signatures** (gasless approvals via signed messages).
+    - Functions like `_mint()` and `_burn()` handle **minting/burning LP tokens** when liquidity is added or removed.
+
+    So this handles the **tokens for liquidity providers**.
+
+    When you **add liquidity**, this contract mints LP tokens for you.
+
+    When you **remove liquidity**, this contract burns your LP tokens.
+
+    ---
+*/
 contract UniswapV2ERC20 is IUniswapV2ERC20 {
     using SafeMath for uint;
 
